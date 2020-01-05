@@ -26,6 +26,10 @@ python AAL_check_program.py
 ```
 
 ## Windows Standalone GUI Program
+![Program Example](https://raw.githubusercontent.com/bkjung/label-AAL/master/program_example.png)
+
+Input : World (NifT) Coordinates
+Output : AAL brain region name
 
 Windows standalone (.exe) program can be created from the .py code.
 
