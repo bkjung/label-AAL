@@ -34,7 +34,11 @@ canvas1.create_window(210, 180, window=entry3)
 
 label0 = tk.Label(root, text='Coordinate - AAL check')
 label0.config(font=('helvetica', 20))
-canvas1.create_window(200, 40, window=label0)
+canvas1.create_window(200, 30, window=label0)
+
+label00 = tk.Label(root, text='(Type z,x,y in World(Voxel) Coordinates)')
+label00.config(font=('helvetica', 15))
+canvas1.create_window(200, 60, window=label00)
 
 label1 = tk.Label(root, text='Z:')
 label1.config(font=('helvetica', 14))
