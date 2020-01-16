@@ -20,7 +20,7 @@ root = tk.Tk()
 
 root.title("AAL Check Program")
 
-canvas1 = tk.Canvas(root, width=500, height=500)
+canvas1 = tk.Canvas(root, width=450, height=350)
 canvas1.pack()
 
 entry1 = tk.Entry(root)
@@ -60,7 +60,9 @@ label4.pack()
 
 label5 = tk.Label(root, text='Result:')
 label5.config(font=('helvetica', 14))
-canvas1.create_window(80, 300, window=label5)
+canvas1.create_window(50, 300, window=label5)
+
+AAL = ""
 
 with open('data/coordinate_list.csv', 'r') as f:
     reader = csv.reader(f)
@@ -161,13 +163,14 @@ def check():
     y = entry3.get()
 
     #print("INPUT nifti coordinate : ", x, y, z)
+    global AAL
     AAL = nifti_to_region_name(x, y, z)
 
     #label4 = tk.Label(root, text=AAL, font=(
     #    'helvetica', 14, 'bold'), bg='white')
     #canvas1.create_window(210, 300, window=label4)
     v.set(AAL)
-    logger.debug('INPUT Z, X, Y : %d %d %d', int(z), int(x), int(y))
+    #logger.debug('INPUT Z, X, Y : %d %d %d', int(z), int(x), int(y))
 
 # def combine_funcs(*funcs):
 #     def combined_func(*args, **kwargs):
@@ -179,13 +182,26 @@ buttonCheck = tk.Button(text='Check', command=check, bg='green',
                         fg='white', font=('helvetica', 12, 'bold'), width=5)
 canvas1.create_window(210, 240, window=buttonCheck)
 
+def save():
+    z = entry1.get()
+    x = entry2.get()
+    y = entry3.get()
+
+    #AAL = nifti_to_region_name(x, y, z)
+
+    logger.debug('INPUT Z, X, Y : %d %d %d / AAL region : %s', int(z), int(x), int(y), AAL)
+
+buttonSave = tk.Button(text='Save', command=save, bg='blue',
+                        fg='white', font=('helvetica', 12, 'bold'), width=5)
+canvas1.create_window(400, 240, window=buttonSave)
+
 def reset():
     entry1.delete(0, 'end')
     entry2.delete(0, 'end')
     entry3.delete(0, 'end')
     v.set("")
 
-buttonReset = tk.Button(text='Reset', command=reset, bg='green',
+buttonReset = tk.Button(text='Reset', command=reset, bg='grey',
                         fg='white', font=('helvetica', 12, 'bold'), width=5)
 
 canvas1.create_window(210, 300, window=label4)
