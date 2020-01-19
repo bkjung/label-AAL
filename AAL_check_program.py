@@ -1,6 +1,6 @@
 import csv
 import tkinter as tk
-from tkinter import messagebox
+#from tkinter import messagebox
 import numpy as np
 import math
 import numbers
@@ -8,6 +8,19 @@ import logging
 #import os, errno
 from datetime import datetime
 
+class MessageWindow(tk.Toplevel):
+    def __init__(self, title, message):
+        super().__init__()
+        self.details_expanded = False
+        self.title(title)
+        self.geometry("300x75+{}+{}".format(self.master.winfo_x()+50, self.master.winfo_y()+100))
+        self.resizable(False, False)
+        self.rowconfigure(0, weight=0)
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        tk.Label(self, image="::tk::icons::warning").grid(row=0, column=0, pady=(7, 0), padx=(7, 7), sticky="e")
+        tk.Label(self, text=message, font=20).grid(row=0, column=1, columnspan=2, pady=(7, 7), sticky="w")
 
 AAL, z, x, y = "", 0, 0, 0
 warning_check = ""
@@ -219,7 +232,7 @@ def check():
     y = entry_y.get()
 
     if z=='' or x=='' or y=='':
-        messagebox.showinfo("Warning", "좌표값이 비어있음")
+        MessageWindow("Warning", "좌표값이 비어있음")
 
     else:        
         flag_checked = True
@@ -250,10 +263,12 @@ def save():
     area = entry_area.get()
 
     if patient_no=='' or severity=='' or area=='':
-        messagebox.showinfo("Warning", "환자 정보가 비어있음")
+        #messagebox.showinfo("Warning", "환자 정보가 비어있음")
+        MessageWindow("Warning", "환자 정보가 비어있음")
 
     elif not flag_checked or flag_coordinates_changed_after_check:
-        messagebox.showinfo("Warning", "좌표값이 비어있거나, Check 버튼을 누르지 않았음")
+        #messagebox.showinfo("Warning", "좌표값이 비어있거나, Check 버튼을 누르지 않았음")
+        MessageWindow("Warning", "좌표값이 비어있거나,\nCheck 버튼을 누르지 않았음")
 
     else:
         logger.debug(' PATIENT# %d / SEVERITY %s / AREA %s / INPUT_Z,X,Y %d %d %d / AAL %s', int(patient_no), severity, area, int(z), int(x), int(y), AAL)
