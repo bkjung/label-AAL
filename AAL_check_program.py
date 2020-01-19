@@ -1,68 +1,123 @@
 import csv
 import tkinter as tk
+from tkinter import messagebox
 import numpy as np
 import math
 import numbers
 import logging
+#import os, errno
 from datetime import datetime
+
+
+AAL, z, x, y = "", 0, 0, 0
+warning_check = ""
+flag_checked = False
+flag_coordinates_changed_after_check = False
 
 logger = logging.getLogger('MainLogger')
 logging.basicConfig(level=logging.DEBUG)
+
+#try:
+#    os.makedirs('log')
+#except OSError as e:
+#    if e.errno != errno.EEXIST:
+#        raise
 
 fh = logging.FileHandler('log/{:%Y%m%d_%H%M%S}.log'.format(datetime.now()))
 formatter = logging.Formatter('%(asctime)s | %(levelname)-8s | %(lineno)04d | %(message)s')
 fh.setFormatter(formatter)
 
 logger.addHandler(fh)
-logger.debug("Coordinate Logging Start")
+#logger.debug("Coordinate Logging Start")
 
 root = tk.Tk()
-
 root.title("AAL Check Program")
 
-canvas1 = tk.Canvas(root, width=450, height=350)
-canvas1.pack()
+c = tk.Canvas(root, width=450, height=420)
+c.pack()
 
-entry1 = tk.Entry(root)
-canvas1.create_window(210, 100, window=entry1)
+label_title = tk.Label(root, text='Coordinate - AAL check')
+label_title.config(font=('helvetica', 20))
+c.create_window(220, 30, window=label_title)
 
-entry2 = tk.Entry(root)
-canvas1.create_window(210, 140, window=entry2)
+label_subtitle = tk.Label(root, text='(Type z,x,y in Voxel Coordinates)')
+label_subtitle.config(font=('helvetica', 15))
+c.create_window(220, 60, window=label_subtitle)
 
-entry3 = tk.Entry(root)
-canvas1.create_window(210, 180, window=entry3)
+label_patient_no = tk.Label(root, text='Patient #')
+label_patient_no.config(font=('helvetica', 11))
+c.create_window(40, 110, window=label_patient_no)
 
-label0 = tk.Label(root, text='Coordinate - AAL check')
-label0.config(font=('helvetica', 20))
-canvas1.create_window(200, 30, window=label0)
+entry_patient_no = tk.Entry(root)
+entry_patient_no.config(width=10)
+c.create_window(115, 110, window=entry_patient_no)
 
-label00 = tk.Label(root, text='(Type z,x,y in World(Voxel) Coordinates)')
-label00.config(font=('helvetica', 15))
-canvas1.create_window(200, 60, window=label00)
+label_severity = tk.Label(root, text='Severity')
+label_severity.config(font=('helvetica', 11))
+c.create_window(190, 110, window=label_severity)
 
-label1 = tk.Label(root, text='Z:')
-label1.config(font=('helvetica', 14))
-canvas1.create_window(100, 100, window=label1)
+entry_severity = tk.Entry(root)
+entry_severity.config(width=10)
+c.create_window(265, 110, window=entry_severity)
 
-label2 = tk.Label(root, text='X:')
-label2.config(font=('helvetica', 14))
-canvas1.create_window(100, 140, window=label2)
+label_area = tk.Label(root, text='Area')
+label_area.config(font=('helvetica', 11))
+c.create_window(340, 110, window=label_area)
 
-label3 = tk.Label(root, text='Y:')
-label3.config(font=('helvetica', 14))
-canvas1.create_window(100, 180, window=label3)
+entry_area = tk.Entry(root)
+entry_area.config(width=10)
+c.create_window(400, 110, window=entry_area)
 
-v = tk.StringVar()
-label4 = tk.Label(root, textvariable = v, font=(
-        'helvetica', 14, 'bold'), bg='white', width=25)
-canvas1.create_window(210, 300, window=label4)
-label4.pack()
+label_z = tk.Label(root, text='z')
+label_z.config(font=('helvetica', 12))
+c.create_window(50, 170, window=label_z)
 
-label5 = tk.Label(root, text='Result:')
-label5.config(font=('helvetica', 14))
-canvas1.create_window(50, 300, window=label5)
+label_x = tk.Label(root, text='x')
+label_x.config(font=('helvetica', 12))
+c.create_window(50, 210, window=label_x)
 
-AAL = ""
+label_y = tk.Label(root, text='y')
+label_y.config(font=('helvetica', 12))
+c.create_window(50, 250, window=label_y)
+
+def callback_change(sv):
+    global flag_coordinates_changed_after_check, warning_check
+    flag_coordinates_changed_after_check = True
+    warning_check = "좌표값 변경 감지\nCheck 버튼 눌러야함"
+    warning_check_var.set(warning_check)
+
+
+sv_z = tk.StringVar()
+sv_z.trace("w", lambda name, index, mode, sv_z=sv_z: callback_change(sv_z))
+entry_z = tk.Entry(root, textvariable=sv_z)
+entry_z.pack()
+c.create_window(150, 170, window=entry_z)
+
+sv_x = tk.StringVar()
+sv_x.trace("w", lambda name, index, mode, sv_x=sv_x: callback_change(sv_x))
+entry_x = tk.Entry(root, textvariable=sv_x)
+entry_x.pack()
+c.create_window(150, 210, window=entry_x)
+
+sv_y = tk.StringVar()
+sv_y.trace("w", lambda name, index, mode, sv_y=sv_y: callback_change(sv_y))
+entry_y = tk.Entry(root, textvariable=sv_y)
+entry_y.pack()
+c.create_window(150, 250, window=entry_y)
+
+label_AAL = tk.Label(root, text='AAL:')
+label_AAL.config(font=('helvetica', 12))
+c.create_window(50, 320, window=label_AAL)
+
+AAL_var = tk.StringVar()
+label_AAL_value = tk.Label(root, textvariable = AAL_var, font=(
+        'helvetica', 12, 'bold'), bg='white', width=30)
+c.create_window(230, 320, window=label_AAL_value)
+
+warning_check_var = tk.StringVar()
+label_warning_check = tk.Label(root, textvariable = warning_check_var, font=(
+        'helvetica', 10, 'bold'), width=15)
+c.create_window(350, 270, window=label_warning_check)
 
 with open('data/coordinate_list.csv', 'r') as f:
     reader = csv.reader(f)
@@ -122,7 +177,7 @@ def mni_to_region_name(x, y, z):
     return region_name[r_index]
 
 # I revised and used nilearn.image.coord_transform function.
-def nifti_to_mni(x, y, z):
+def voxel_to_mni(x, y, z):
     affine = [[-2.,    0.,    0.,   90.], 
     [0.,    2.,    0., -126.],
     [0.,    0.,    2.,  -72.],
@@ -132,7 +187,7 @@ def nifti_to_mni(x, y, z):
     #squeeze = (not hasattr(x, '__iter__'))
     #return_number = isinstance(x, numbers.Number)
     x = np.asanyarray(x)
-    shape = x.shape
+    #shape = x.shape
     coords = np.c_[np.atleast_1d(x).flat,
                    np.atleast_1d(y).flat,
                    np.atleast_1d(z).flat,
@@ -145,32 +200,42 @@ def nifti_to_mni(x, y, z):
     
     _x, _y, _z, _ = np.dot(affine, coords)
     #if return_number:
-    #print("MNI coordinate :", _x.item(), _y.item(), _z.item())
+    #print("mni coordinate :", _x.item(), _y.item(), _z.item())
     return _x.item(), _y.item(), _z.item()
     #if squeeze:
     #    return _x.squeeze(), _y.squeeze(), _z.squeeze()
     #return np.reshape(_x, shape), np.reshape(_y, shape), np.reshape(_z, shape)
 
 
-def nifti_to_region_name(x, y, z):
-    (_x, _y, _z) = nifti_to_mni(x, y, z)
+def voxel_to_region_name(x, y, z):
+    (_x, _y, _z) = voxel_to_mni(x, y, z)
 
     return (mni_to_region_name(_x, _y, _z))
 
 def check():
-    z = entry1.get()
-    x = entry2.get()
-    y = entry3.get()
+    global z, x, y, flag_checked, flag_coordinates_changed_after_check, warning_check
+    z = entry_z.get()
+    x = entry_x.get()
+    y = entry_y.get()
 
-    #print("INPUT nifti coordinate : ", x, y, z)
-    global AAL
-    AAL = nifti_to_region_name(x, y, z)
+    if z=='' or x=='' or y=='':
+        messagebox.showinfo("Warning", "좌표값이 비어있음")
 
-    #label4 = tk.Label(root, text=AAL, font=(
-    #    'helvetica', 14, 'bold'), bg='white')
-    #canvas1.create_window(210, 300, window=label4)
-    v.set(AAL)
-    #logger.debug('INPUT Z, X, Y : %d %d %d', int(z), int(x), int(y))
+    else:        
+        flag_checked = True
+        flag_coordinates_changed_after_check = False
+        warning_check = ""
+
+        #print("INPUT voxel coordinate : ", x, y, z)
+        global AAL
+        AAL = voxel_to_region_name(x, y, z)
+
+        #label4 = tk.Label(root, text=AAL, font=(
+        #    'helvetica', 14, 'bold'), bg='white')
+        #c.create_window(210, 300, window=label4)
+        AAL_var.set(AAL)
+        warning_check_var.set(warning_check)
+        #logger.debug('INPUT Z, X, Y : %d %d %d', int(z), int(x), int(y))
 
 # def combine_funcs(*funcs):
 #     def combined_func(*args, **kwargs):
@@ -178,37 +243,47 @@ def check():
 #             f(*args, **kwargs)
 #     return combined_func
 
-buttonCheck = tk.Button(text='Check', command=check, bg='green',
-                        fg='white', font=('helvetica', 12, 'bold'), width=5)
-canvas1.create_window(210, 240, window=buttonCheck)
-
 def save():
-    z = entry1.get()
-    x = entry2.get()
-    y = entry3.get()
+    #AAL = voxel_to_region_name(x, y, z)
+    patient_no = entry_patient_no.get()
+    severity = entry_severity.get()
+    area = entry_area.get()
 
-    #AAL = nifti_to_region_name(x, y, z)
+    if patient_no=='' or severity=='' or area=='':
+        messagebox.showinfo("Warning", "환자 정보가 비어있음")
 
-    logger.debug('INPUT Z, X, Y : %d %d %d / AAL region : %s', int(z), int(x), int(y), AAL)
+    elif not flag_checked or flag_coordinates_changed_after_check:
+        messagebox.showinfo("Warning", "좌표값이 비어있거나, Check 버튼을 누르지 않았음")
 
-buttonSave = tk.Button(text='Save', command=save, bg='blue',
-                        fg='white', font=('helvetica', 12, 'bold'), width=5)
-canvas1.create_window(400, 240, window=buttonSave)
+    else:
+        logger.debug(' PATIENT# %d / SEVERITY %s / AREA %s / INPUT_Z,X,Y %d %d %d / AAL %s', int(patient_no), severity, area, int(z), int(x), int(y), AAL)
+        reset()
+        
 
 def reset():
-    entry1.delete(0, 'end')
-    entry2.delete(0, 'end')
-    entry3.delete(0, 'end')
-    v.set("")
+    global z, x, y, flag_checked, flag_coordinates_changed_after_check, warning_check, AAL
+    entry_z.delete(0, 'end')
+    entry_x.delete(0, 'end')
+    entry_y.delete(0, 'end')
+    entry_patient_no.delete(0, 'end')
+    entry_severity.delete(0, 'end')
+    entry_area.delete(0, 'end')
+
+    z, x, y, flag_checked, flag_coordinates_changed_after_check, warning_check, AAL = 0, 0, 0, False, False, "", ""
+    
+    AAL_var.set("")
+    warning_check_var.set(warning_check)
+
+buttonCheck = tk.Button(text='Check', command=check, bg='green',
+                        fg='white', font=('helvetica', 12, 'bold'), width=5)
+c.create_window(350, 230, window=buttonCheck)
 
 buttonReset = tk.Button(text='Reset', command=reset, bg='grey',
-                        fg='white', font=('helvetica', 12, 'bold'), width=5)
+                        fg='white', font=('helvetica', 12, 'bold'), width=5)                        
+c.create_window(350, 180, window=buttonReset)
 
-canvas1.create_window(210, 300, window=label4)
-
-#buttonReset = tk.Button(text='Reset', command=reset, bg='green',
-#                        fg='white', font=('helvetica', 12, 'bold'), width=5)
-                        
-canvas1.create_window(400, 120, window=buttonReset)
+buttonSave = tk.Button(text='Save & Reset', command=save, bg='blue',
+                        fg='white', font=('helvetica', 12, 'bold'), width=13)
+c.create_window(210, 370, window=buttonSave)
 
 root.mainloop()
