@@ -229,7 +229,8 @@ def check():
     global z, x, y, flag_checked, flag_coordinates_changed_after_check, warning_check
     z = entry_z.get()
     x = entry_x.get()
-    y = entry_y.get()
+    y = str(109 - int(entry_y.get()))     #In case of option "Use image inherent orientation"
+    #y = entry_y.get()     #In case of option " image inherent orientation"
 
     if z=='' or x=='' or y=='':
         MessageWindow("Warning", "좌표값이 비어있음")
