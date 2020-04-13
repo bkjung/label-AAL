@@ -1,6 +1,6 @@
 # label-AAL
 
-Find AAL brain atlas region name, from World(NIfTI)/MNI coordinate input !
+Find AAL brain atlas region name, from World(NIfTI)/MNI coordinate input
 
 This procedure is embedded in brain image programs(Vinci, MRIcron), but it's hard to find codes for those who want to develop their own program.
 
